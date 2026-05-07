@@ -6,7 +6,6 @@
 /**
  * @wordpress-plugin
  * Plugin Name: Lettr - Email API
- * Plugin URI: https://lettr.com
  * Description: The email API for developers. Send transactional emails at scale with reliable delivery.
  * Requires at least: 5.8
  * Version: 1.0.0
