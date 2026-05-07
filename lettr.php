@@ -41,6 +41,7 @@ register_activation_hook( __FILE__, array( 'Lettr', 'plugin_activation' ) );
 register_deactivation_hook( __FILE__, array( 'Lettr', 'plugin_deactivation' ) );
 
 require_once LETTR__PLUGIN_DIR . 'class-lettr.php';
+require_once LETTR__PLUGIN_DIR . 'class-lettr-api.php';
 
 add_action( 'init', array( 'Lettr', 'init' ) );
 
