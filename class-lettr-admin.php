@@ -105,8 +105,6 @@ class Lettr_Admin {
 	public static function display_page() {
 		if ( ! Lettr::get_api_key() || ( isset( $_GET['view'] ) && 'start' === $_GET['view'] ) ) {
 			self::display_start_page();
-		} elseif ( isset( $_GET['view'] ) && 'stats' === $_GET['view'] ) {
-			self::display_stats_page();
 		} else {
 			self::display_configuration_page();
 		}
@@ -121,12 +119,6 @@ class Lettr_Admin {
 		}
 
 		Lettr::view( 'start' );
-	}
-
-	public static function display_stats_page() {
-		delete_option( 'lettr_api_key' );
-
-		Lettr::view( 'stats' );
 	}
 
 	public static function display_configuration_page() {
@@ -271,7 +263,6 @@ class Lettr_Admin {
 
 					)
 				);
-			} elseif ( isset( $_GET['view'] ) && 'stats' === $_GET['view'] ) {
 			} else {
 				// Configuration page
 				$current_screen->add_help_tab(
@@ -401,12 +392,7 @@ class Lettr_Admin {
 		$base_url = admin_url( 'options-general.php' );
 		$args     = array( 'page' => 'lettr' );
 
-		if ( 'stats' === $page ) {
-			$args = array(
-				'page' => 'lettr',
-				'view' => 'stats',
-			);
-		} elseif ( 'init' === $page ) {
+		if ( 'init' === $page ) {
 			$args = array(
 				'page' => 'lettr',
 				'view' => 'start',

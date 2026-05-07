@@ -12,7 +12,13 @@
     ],
     "scripts": {
         "lint": "phpcs",
-        "format": "phpcbf"
+        "format": "phpcbf",
+        "build": [
+            "@putenv LETTR_REF=HEAD",
+            "rm -f lettr.zip",
+            "git archive --worktree-attributes --format=zip --prefix=lettr/ -o lettr.zip $LETTR_REF",
+            "echo Built lettr.zip"
+        ]
     },
     "require": {
         "php": ">=7.2.24|^8"

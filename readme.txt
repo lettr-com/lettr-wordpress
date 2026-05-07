@@ -36,6 +36,23 @@ This plugin overrides the default WordPress `wp_mail()` function and routes all 
 4. Configure your sender name and email address.
 5. Send a test email to verify everything is working.
 
+== External services ==
+
+This plugin connects to the Lettr API at `app.lettr.com` to deliver email on behalf of your WordPress site. Each time `wp_mail()` is invoked, the plugin sends the following data to Lettr over HTTPS so that Lettr can process and deliver the message:
+
+* The configured sender email address and name
+* Recipient, CC, BCC, and Reply-To addresses
+* The email subject, HTML and/or plain text body, and any attachments
+* Any custom email headers, tags, or metadata supplied by the calling code
+* Your Lettr API key (sent as a Bearer token in the `Authorization` header for authentication)
+
+The plugin also calls `app.lettr.com/api/auth/check` to validate the API key when you save it on the settings screen.
+
+This service is provided by Lettr. By using this plugin you agree to Lettr's terms and acknowledge their privacy practices:
+
+* Terms of Service: [https://lettr.com/terms](https://lettr.com/terms)
+* Privacy Policy: [https://lettr.com/privacy](https://lettr.com/privacy)
+
 == Frequently Asked Questions ==
 
 = Do I need a Lettr account? =
