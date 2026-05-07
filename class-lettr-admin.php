@@ -72,7 +72,8 @@ class Lettr_Admin {
 						'settings_page_lettr',
 					)
 				)
-			)
+			),
+			true
 		) ) {
 			$lettr_css_path = 'public/lettr.css';
 			wp_register_style( 'lettr', plugin_dir_url( __FILE__ ) . $lettr_css_path, array(), self::get_asset_file_version( $lettr_css_path ) );
@@ -310,11 +311,19 @@ class Lettr_Admin {
 			}
 			$result = array( false, 'new-key-empty' );
 		} elseif ( $new_key !== $old_key ) {
-			if ( Lettr::is_valid_key( $new_key ) ) {
-				update_option( 'lettr_api_key', $new_key );
-				$result = array( true, 'new-key-valid' );
-			} else {
+			if ( ! Lettr::is_valid_key( $new_key ) ) {
 				$result = array( false, 'new-key-invalid' );
+			} else {
+				$verified = Lettr::verify_key( $new_key );
+				if ( true === $verified ) {
+					update_option( 'lettr_api_key', $new_key );
+					$result = array( true, 'new-key-valid' );
+				} elseif ( false === $verified ) {
+					$result = array( false, 'new-key-invalid' );
+				} else {
+					self::add_status( 'lettr-error', $verified->get_error_message() );
+					$result = array( false, 'lettr-error' );
+				}
 			}
 		}
 

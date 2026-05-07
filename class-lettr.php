@@ -61,4 +61,28 @@ class Lettr {
 
 		return true;
 	}
+
+	/**
+	 * Live-check a candidate API key against `GET /auth/check`.
+	 *
+	 * @param string $key
+	 * @return true|false|WP_Error true on accepted, false on 401, WP_Error on transport / other.
+	 */
+	public static function verify_key( $key ) {
+		$api    = new Lettr_Api( $key );
+		$result = $api->auth_check();
+
+		if ( ! is_wp_error( $result ) ) {
+			return true;
+		}
+
+		$data   = $result->get_error_data();
+		$status = is_array( $data ) && isset( $data['status'] ) ? (int) $data['status'] : 0;
+
+		if ( 401 === $status ) {
+			return false;
+		}
+
+		return $result;
+	}
 }
