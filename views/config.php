@@ -1,16 +1,19 @@
 <?php
-$current_user       = wp_get_current_user();
-$current_user_email = $current_user->user_email;
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+$lettr_current_user       = wp_get_current_user();
+$lettr_current_user_email = $lettr_current_user->user_email;
 
-$notice_message    = isset( $notice ) && isset( $notice['message'] ) ? $notice['message'] : null;
-$notice_is_success = isset( $notice ) && isset( $notice['success'] ) ? $notice['success'] : false;
+$lettr_notice_message    = isset( $notice ) && isset( $notice['message'] ) ? $notice['message'] : null;
+$lettr_notice_is_success = isset( $notice ) && isset( $notice['success'] ) ? $notice['success'] : false;
 ?>
 <div class="lettr-plugin-container">
 	<div class="lettr-config-container">
-		<?php Lettr::view( 'logo', array( 'dashboard' => true ) ); ?>
+		<?php Lettr::view( 'logo', array( 'lettr_dashboard' => true ) ); ?>
 
-		<?php if ( isset( $notice_message ) ) : ?>
-			<div id="lettr_alerts" data-message="<?php echo esc_attr( $notice_message ); ?>" data-success="<?php echo esc_attr( $notice_is_success ); ?>"></div>
+		<?php if ( isset( $lettr_notice_message ) ) : ?>
+			<div id="lettr_alerts" data-message="<?php echo esc_attr( $lettr_notice_message ); ?>" data-success="<?php echo esc_attr( $lettr_notice_is_success ); ?>"></div>
 		<?php else : ?>
 			<div id="lettr_alerts"></div>
 		<?php endif; ?>
@@ -52,7 +55,7 @@ $notice_is_success = isset( $notice ) && isset( $notice['success'] ) ? $notice['
 					<form id="lettr-test-email-form" class="lettr-form" autocomplete="off" method="post">
 						<div>
 							<label for="test_email" class="lettr-label"><?php esc_html_e( 'Email address', 'lettr' ); ?></label>
-							<input id="test_email" name="email" type="email" class="lettr-input" value="<?php echo esc_attr( $current_user_email ); ?>" autocomplete="email" required>
+							<input id="test_email" name="email" type="email" class="lettr-input" value="<?php echo esc_attr( $lettr_current_user_email ); ?>" autocomplete="email" required>
 						</div>
 						<div>
 							<input type="submit" class="lettr-button is-primary" value="<?php esc_attr_e( 'Send test email', 'lettr' ); ?>">

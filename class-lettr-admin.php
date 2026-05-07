@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 class Lettr_Admin {
 
 	public const NONCE = 'lettr-nonce';
@@ -40,7 +44,8 @@ class Lettr_Admin {
 			delete_option( 'Activated_Lettr' );
 			if ( ! headers_sent() ) {
 				$admin_url = self::get_page_url( 'init' );
-				wp_redirect( $admin_url );
+				wp_safe_redirect( $admin_url );
+				exit;
 			}
 		}
 	}
@@ -103,6 +108,7 @@ class Lettr_Admin {
 	}
 
 	public static function display_page() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view routing.
 		if ( ! Lettr::get_api_key() || ( isset( $_GET['view'] ) && 'start' === $_GET['view'] ) ) {
 			self::display_start_page();
 		} else {
@@ -123,8 +129,10 @@ class Lettr_Admin {
 
 	public static function display_configuration_page() {
 		$status = '';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view routing.
 		if ( isset( $_GET['status'] ) ) {
-			$status = $_GET['status'];
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view routing.
+			$status = sanitize_text_field( wp_unslash( $_GET['status'] ) );
 		}
 
 		$args = array();
@@ -240,6 +248,7 @@ class Lettr_Admin {
 		$current_screen = get_current_screen();
 
 		if ( current_user_can( 'manage_options' ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only view routing.
 			if ( ! Lettr::get_api_key() || ( isset( $_GET['view'] ) && 'start' === $_GET['view'] ) ) {
 				// Setup page
 				$current_screen->add_help_tab(

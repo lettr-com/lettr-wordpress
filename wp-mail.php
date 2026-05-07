@@ -1,5 +1,9 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Parse an address line into [email, name].
  * Accepts both `user@example.com` and `Name <user@example.com>` forms.
@@ -54,8 +58,10 @@ function lettr_forbidden_passthrough_headers() {
  */
 function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
 	// Compact the input, apply the filters, and extract them back out.
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp_mail() core hook contract.
 	$atts = apply_filters( 'wp_mail', compact( 'to', 'subject', 'message', 'headers', 'attachments' ) );
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp_mail() core hook contract.
 	$pre_wp_mail = apply_filters( 'pre_wp_mail', null, $atts );
 
 	if ( null !== $pre_wp_mail ) {
@@ -151,6 +157,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		}
 	}
 
+	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp_mail() core hook contract.
 	$content_type = apply_filters( 'wp_mail_content_type', $content_type );
 
 	// The Lettr-configured sender is authoritative. We deliberately do NOT
@@ -244,11 +251,13 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	$response = $api->send_email( $body );
 
 	if ( is_wp_error( $response ) ) {
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp_mail() core hook contract.
 		do_action( 'wp_mail_failed', $response );
 		Lettr_Admin::add_status( 'lettr-error', $response->get_error_data() );
 		return false;
 	}
 
+	// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp_mail() core hook contract.
 	do_action(
 		'wp_mail_succeeded',
 		array(
@@ -259,6 +268,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 			'attachments' => isset( $body['attachments'] ) ? $body['attachments'] : null,
 		)
 	);
+	// phpcs:enable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 
 	return true;
 }

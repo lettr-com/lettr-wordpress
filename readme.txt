@@ -1,9 +1,11 @@
-=== Lettr – Email API for WordPress ===
+=== Lettr - Email API ===
 Contributors: lettr
-Tested up to: 6.8
+Tested up to: 6.9
 Stable tag:   1.0.0
 License:      GPL-2.0-or-later
 Tags:         email, smtp, transactional email, email api, lettr
+
+Send transactional emails from your site through the Lettr email API.
 
 == Description ==
 

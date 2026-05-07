@@ -1,3 +1,8 @@
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+?>
 <div class="lettr-plugin-container">
 	<div class="lettr-start-container">
 		<?php Lettr::view( 'logo' ); ?>
