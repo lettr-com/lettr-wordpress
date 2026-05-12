@@ -1,5 +1,5 @@
 === Lettr - Email API ===
-Contributors: lettr
+Contributors: vojtechj
 Tested up to: 6.9
 Stable tag:   1.0.0
 License:      GPL-2.0-or-later
@@ -53,7 +53,7 @@ The plugin also calls `app.lettr.com/api/auth/check` to validate the API key whe
 This service is provided by Lettr. By using this plugin you agree to Lettr's terms and acknowledge their privacy practices:
 
 * Terms of Service: [https://lettr.com/terms](https://lettr.com/terms)
-* Privacy Policy: [https://lettr.com/privacy](https://lettr.com/privacy)
+* Privacy Policy: [https://lettr.com/privacy-policy](https://lettr.com/privacy-policy)
 
 == Frequently Asked Questions ==
 
