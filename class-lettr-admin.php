@@ -40,8 +40,8 @@ class Lettr_Admin {
 	}
 
 	public static function admin_init() {
-		if ( get_option( 'Activated_Lettr' ) ) {
-			delete_option( 'Activated_Lettr' );
+		if ( get_option( 'lettr_activated' ) ) {
+			delete_option( 'lettr_activated' );
 			if ( ! headers_sent() ) {
 				$admin_url = self::get_page_url( 'init' );
 				wp_safe_redirect( $admin_url );
