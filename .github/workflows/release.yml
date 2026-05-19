@@ -1,0 +1,48 @@
+name: Release to WordPress.org
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    name: Deploy to WordPress.org SVN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify plugin versions match the release tag
+        run: |
+          set -euo pipefail
+          TAG_RAW="${{ github.event.release.tag_name }}"
+          TAG="${TAG_RAW#v}"
+
+          HEADER_VERSION=$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\([0-9A-Za-z.\-]*\).*/\1/p' lettr.php | head -n1)
+          DEFINE_VERSION=$(sed -n "s/.*LETTR_VERSION'[[:space:]]*,[[:space:]]*'\([0-9A-Za-z.\-]*\)'.*/\1/p" lettr.php | head -n1)
+          STABLE_TAG=$(sed -n 's/^Stable tag:[[:space:]]*\([0-9A-Za-z.\-]*\).*/\1/p' readme.txt | head -n1)
+
+          echo "Release tag:  $TAG"
+          echo "Plugin header: $HEADER_VERSION"
+          echo "LETTR_VERSION: $DEFINE_VERSION"
+          echo "Stable tag:    $STABLE_TAG"
+
+          if [ "$TAG" != "$HEADER_VERSION" ] || [ "$TAG" != "$DEFINE_VERSION" ] || [ "$TAG" != "$STABLE_TAG" ]; then
+            echo "::error::Release tag ($TAG) does not match all plugin version locations."
+            exit 1
+          fi
+
+      - name: Deploy to WordPress.org
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: lettr
+        with:
+          generate-zip: true
+
+      - name: Attach built zip to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.deploy.outputs.zip-path }}

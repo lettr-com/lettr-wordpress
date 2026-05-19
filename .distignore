@@ -1,0 +1,32 @@
+# Files & directories excluded from the wp.org SVN deploy.
+# Used by 10up/action-wordpress-plugin-deploy.
+
+# VCS / CI
+/.git
+/.github
+/.gitattributes
+/.gitignore
+/.distignore
+
+# Editor / OS
+/.vscode
+/.editorconfig
+/.DS_Store
+
+# AI / agent state
+/.claude
+
+# Dev tooling
+/vendor
+/node_modules
+/composer.json
+/composer.lock
+/phpcs.xml.dist
+/renovate.json
+
+# Build artifacts
+/.build
+/lettr.zip
+
+# GitHub-only docs (wp.org uses readme.txt)
+/README.md
