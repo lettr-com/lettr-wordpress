@@ -15,7 +15,7 @@
         "format": "phpcbf",
         "build": [
             "rm -rf .build lettr.zip",
-            "rsync -a --exclude='.git' --exclude='.git*' --exclude='.vscode' --exclude='.editorconfig' --exclude='vendor' --exclude='node_modules' --exclude='composer.json' --exclude='composer.lock' --exclude='phpcs.xml.dist' --exclude='renovate.json' --exclude='lettr.zip' --exclude='.build' --exclude='.DS_Store' ./ .build/lettr/",
+            "rsync -a --exclude='.git' --exclude='.git*' --exclude='.vscode' --exclude='.claude' --exclude='.editorconfig' --exclude='vendor' --exclude='node_modules' --exclude='composer.json' --exclude='composer.lock' --exclude='phpcs.xml.dist' --exclude='renovate.json' --exclude='lettr.zip' --exclude='.build' --exclude='.DS_Store' ./ .build/lettr/",
             "( cd .build && zip -qr ../lettr.zip lettr )",
             "rm -rf .build",
             "echo Built lettr.zip"

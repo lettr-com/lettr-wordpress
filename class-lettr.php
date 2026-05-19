@@ -23,7 +23,7 @@ class Lettr {
 	public static function plugin_activation() {
 		$script_name = isset( $_SERVER['SCRIPT_NAME'] ) ? sanitize_text_field( wp_unslash( $_SERVER['SCRIPT_NAME'] ) ) : '';
 		if ( '' !== $script_name && false !== strpos( $script_name, '/wp-admin/plugins.php' ) ) {
-			add_option( 'Activated_Lettr', true );
+			add_option( 'lettr_activated', true );
 		}
 	}
 
