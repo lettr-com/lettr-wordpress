@@ -203,6 +203,208 @@ class Lettr_Api {
 		return $this->request( 'GET', '/projects', array( 'query' => $query ) );
 	}
 
+	// -- Audience: Lists -------------------------------------------------
+
+	/**
+	 * @param array $query page, per_page
+	 */
+	public function list_audience_lists( array $query = array() ) {
+		return $this->request( 'GET', '/audience/lists', array( 'query' => $query ) );
+	}
+
+	/**
+	 * @param array $payload Required: name.
+	 */
+	public function create_audience_list( array $payload ) {
+		return $this->request( 'POST', '/audience/lists', array( 'body' => $payload ) );
+	}
+
+	/**
+	 * @param array $list_ids List IDs to delete.
+	 */
+	public function bulk_delete_audience_lists( array $list_ids ) {
+		return $this->request( 'DELETE', '/audience/lists/bulk', array( 'body' => array( 'list_ids' => $list_ids ) ) );
+	}
+
+	public function get_audience_list( $list_id ) {
+		return $this->request( 'GET', '/audience/lists/' . rawurlencode( $list_id ) );
+	}
+
+	/**
+	 * @param array $payload Optional: name.
+	 */
+	public function update_audience_list( $list_id, array $payload ) {
+		return $this->request( 'PATCH', '/audience/lists/' . rawurlencode( $list_id ), array( 'body' => $payload ) );
+	}
+
+	public function delete_audience_list( $list_id ) {
+		return $this->request( 'DELETE', '/audience/lists/' . rawurlencode( $list_id ) );
+	}
+
+	// -- Audience: Contacts ----------------------------------------------
+
+	/**
+	 * @param array $query page, per_page, search, status, list_id, segment_id
+	 */
+	public function list_audience_contacts( array $query = array() ) {
+		return $this->request( 'GET', '/audience/contacts', array( 'query' => $query ) );
+	}
+
+	/**
+	 * @param array $payload Required: email. Optional: list_id, properties, double_opt_in.
+	 */
+	public function create_audience_contact( array $payload ) {
+		return $this->request( 'POST', '/audience/contacts', array( 'body' => $payload ) );
+	}
+
+	/**
+	 * @param array $payload Required: emails. Optional: list_id, properties.
+	 */
+	public function bulk_create_audience_contacts( array $payload ) {
+		return $this->request( 'POST', '/audience/contacts/bulk', array( 'body' => $payload ) );
+	}
+
+	/**
+	 * @param array $payload Required: contact_ids, list_ids.
+	 */
+	public function bulk_attach_audience_contacts_to_lists( array $payload ) {
+		return $this->request( 'POST', '/audience/contacts/lists/bulk', array( 'body' => $payload ) );
+	}
+
+	/**
+	 * @param array $payload Required: contact_ids, list_ids.
+	 */
+	public function bulk_detach_audience_contacts_from_lists( array $payload ) {
+		return $this->request( 'DELETE', '/audience/contacts/lists/bulk', array( 'body' => $payload ) );
+	}
+
+	public function get_audience_contact( $contact_id ) {
+		return $this->request( 'GET', '/audience/contacts/' . rawurlencode( $contact_id ) );
+	}
+
+	/**
+	 * @param array $payload Optional: email, status (subscribed|unsubscribed), properties.
+	 */
+	public function update_audience_contact( $contact_id, array $payload ) {
+		return $this->request( 'PATCH', '/audience/contacts/' . rawurlencode( $contact_id ), array( 'body' => $payload ) );
+	}
+
+	public function delete_audience_contact( $contact_id ) {
+		return $this->request( 'DELETE', '/audience/contacts/' . rawurlencode( $contact_id ) );
+	}
+
+	public function attach_audience_contact_to_list( $contact_id, $list_id ) {
+		return $this->request( 'POST', '/audience/contacts/' . rawurlencode( $contact_id ) . '/lists/' . rawurlencode( $list_id ) );
+	}
+
+	public function detach_audience_contact_from_list( $contact_id, $list_id ) {
+		return $this->request( 'DELETE', '/audience/contacts/' . rawurlencode( $contact_id ) . '/lists/' . rawurlencode( $list_id ) );
+	}
+
+	public function subscribe_audience_contact_to_topic( $contact_id, $topic_id ) {
+		return $this->request( 'POST', '/audience/contacts/' . rawurlencode( $contact_id ) . '/topics/' . rawurlencode( $topic_id ) );
+	}
+
+	public function unsubscribe_audience_contact_from_topic( $contact_id, $topic_id ) {
+		return $this->request( 'DELETE', '/audience/contacts/' . rawurlencode( $contact_id ) . '/topics/' . rawurlencode( $topic_id ) );
+	}
+
+	// -- Audience: Topics ------------------------------------------------
+
+	/**
+	 * @param array $query page, per_page
+	 */
+	public function list_audience_topics( array $query = array() ) {
+		return $this->request( 'GET', '/audience/topics', array( 'query' => $query ) );
+	}
+
+	/**
+	 * @param array $payload Required: name. Optional: description,
+	 *                       default_subscription (opt_in|opt_out),
+	 *                       visibility (public|private).
+	 */
+	public function create_audience_topic( array $payload ) {
+		return $this->request( 'POST', '/audience/topics', array( 'body' => $payload ) );
+	}
+
+	public function get_audience_topic( $topic_id ) {
+		return $this->request( 'GET', '/audience/topics/' . rawurlencode( $topic_id ) );
+	}
+
+	/**
+	 * @param array $payload Optional: name, description, visibility (public|private).
+	 */
+	public function update_audience_topic( $topic_id, array $payload ) {
+		return $this->request( 'PATCH', '/audience/topics/' . rawurlencode( $topic_id ), array( 'body' => $payload ) );
+	}
+
+	public function delete_audience_topic( $topic_id ) {
+		return $this->request( 'DELETE', '/audience/topics/' . rawurlencode( $topic_id ) );
+	}
+
+	// -- Audience: Properties --------------------------------------------
+
+	/**
+	 * @param array $query page, per_page
+	 */
+	public function list_audience_properties( array $query = array() ) {
+		return $this->request( 'GET', '/audience/properties', array( 'query' => $query ) );
+	}
+
+	/**
+	 * @param array $payload Required: name, type (string|number|boolean|date|json).
+	 *                       Optional: fallback_value.
+	 */
+	public function create_audience_property( array $payload ) {
+		return $this->request( 'POST', '/audience/properties', array( 'body' => $payload ) );
+	}
+
+	public function get_audience_property( $property_id ) {
+		return $this->request( 'GET', '/audience/properties/' . rawurlencode( $property_id ) );
+	}
+
+	/**
+	 * @param array $payload Optional: fallback_value.
+	 */
+	public function update_audience_property( $property_id, array $payload ) {
+		return $this->request( 'PATCH', '/audience/properties/' . rawurlencode( $property_id ), array( 'body' => $payload ) );
+	}
+
+	public function delete_audience_property( $property_id ) {
+		return $this->request( 'DELETE', '/audience/properties/' . rawurlencode( $property_id ) );
+	}
+
+	// -- Audience: Segments ----------------------------------------------
+
+	/**
+	 * @param array $query page, per_page, list_id
+	 */
+	public function list_audience_segments( array $query = array() ) {
+		return $this->request( 'GET', '/audience/segments', array( 'query' => $query ) );
+	}
+
+	/**
+	 * @param array $payload Required: name, conditions. Optional: list_id.
+	 */
+	public function create_audience_segment( array $payload ) {
+		return $this->request( 'POST', '/audience/segments', array( 'body' => $payload ) );
+	}
+
+	public function get_audience_segment( $segment_id ) {
+		return $this->request( 'GET', '/audience/segments/' . rawurlencode( $segment_id ) );
+	}
+
+	/**
+	 * @param array $payload Optional: name, list_id, conditions.
+	 */
+	public function update_audience_segment( $segment_id, array $payload ) {
+		return $this->request( 'PATCH', '/audience/segments/' . rawurlencode( $segment_id ), array( 'body' => $payload ) );
+	}
+
+	public function delete_audience_segment( $segment_id ) {
+		return $this->request( 'DELETE', '/audience/segments/' . rawurlencode( $segment_id ) );
+	}
+
 	// -- Internal --------------------------------------------------------
 
 	/**

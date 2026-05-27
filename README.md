@@ -38,6 +38,24 @@ Send transactional and marketing emails from your WordPress site using the [Lett
 
 All outgoing WordPress emails (`wp_mail`) will now be sent through the Lettr API automatically — including emails from WooCommerce, contact form plugins, and any other plugin that uses the standard WordPress mail function.
 
+## For developers
+
+The plugin bundles `Lettr_Api` (`class-lettr-api.php`), a self-contained PHP client that mirrors the full [Lettr API](https://docs.lettr.com/api-reference/introduction) — every operation in the OpenAPI spec maps to exactly one public method. The plugin itself only uses email sending and auth-check; the remaining surfaces (domains, webhooks, templates, projects, and the `audience/*` lists, contacts, topics, properties, and segments) are intentional SDK surface for your own integrations, not dead code. They are bundled because WordPress plugins can't rely on Composer at runtime.
+
+```php
+$lettr = new Lettr_Api(); // uses the API key saved in plugin settings
+
+// Subscribe a new commenter / customer to an audience list:
+$lettr->create_audience_contact( array(
+    'email'   => $user->user_email,
+    'list_id' => 'lst_123',
+) );
+
+$result = $lettr->list_audience_contacts( array( 'per_page' => 50 ) );
+```
+
+Every method returns the decoded JSON array on success, `true` on `204 No Content`, or a `WP_Error` on failure.
+
 ## Documentation
 
 - [Lettr Documentation](https://docs.lettr.com)
