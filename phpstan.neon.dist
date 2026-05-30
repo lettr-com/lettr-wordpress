@@ -1,0 +1,13 @@
+includes:
+	- vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+	level: 5
+	paths:
+		- lettr.php
+		- class-lettr.php
+		- class-lettr-api.php
+		- class-lettr-admin.php
+		- wp-mail.php
+		- index.php
+		- views

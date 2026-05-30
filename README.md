@@ -40,7 +40,7 @@ All outgoing WordPress emails (`wp_mail`) will now be sent through the Lettr API
 
 ## For developers
 
-The plugin bundles `Lettr_Api` (`class-lettr-api.php`), a self-contained PHP client that mirrors the full [Lettr API](https://docs.lettr.com/api-reference/introduction) — every operation in the OpenAPI spec maps to exactly one public method. The plugin itself only uses email sending and auth-check; the remaining surfaces (domains, webhooks, templates, projects, and the `audience/*` lists, contacts, topics, properties, and segments) are intentional SDK surface for your own integrations, not dead code. They are bundled because WordPress plugins can't rely on Composer at runtime.
+The plugin bundles `Lettr_Api` (`class-lettr-api.php`), a self-contained PHP client that mirrors the full [Lettr API](https://docs.lettr.com/api-reference/introduction) — every operation in the OpenAPI spec maps to exactly one public method. The plugin itself only uses email sending and auth-check; the remaining surfaces (domains, webhooks, templates, projects, campaigns, and the `audience/*` lists, contacts, topics, properties, and segments) are intentional SDK surface for your own integrations, not dead code. They are bundled because WordPress plugins can't rely on Composer at runtime.
 
 ```php
 $lettr = new Lettr_Api(); // uses the API key saved in plugin settings
