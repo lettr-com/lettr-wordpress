@@ -1,7 +1,7 @@
 === Lettr - Email API ===
 Contributors: vojtechj
 Tested up to: 7.0
-Stable tag:   1.1.0
+Stable tag:   1.2.0
 License:      GPL-2.0-or-later
 Tags:         email, smtp, transactional email, email api, lettr
 
@@ -74,6 +74,9 @@ No. Lettr uses a REST API instead of SMTP, which means there are no ports to ope
 Log in to your account at [lettr.com](https://lettr.com) and navigate to the API Keys section.
 
 == Changelog ==
+
+= 1.2.0 =
+* Add campaigns API client methods (list, show, events, send, schedule, unschedule).
 
 = 1.1.0 =
 * Add audience API client methods (lists, contacts, topics, properties, segments).

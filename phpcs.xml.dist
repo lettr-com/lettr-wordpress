@@ -21,4 +21,7 @@
 
     <!-- Exclude third party libraries -->
 	<exclude-pattern>/vendor/*</exclude-pattern>
+
+	<!-- Tests follow PSR-4 / PHPUnit conventions, not WP core file naming. -->
+	<exclude-pattern>/tests/*</exclude-pattern>
 </ruleset>

@@ -21,16 +21,16 @@ jobs:
           TAG_RAW="${{ github.event.release.tag_name }}"
           TAG="${TAG_RAW#v}"
 
+          # LETTR_VERSION is derived from this header at runtime (get_file_data),
+          # so the header and readme.txt are the only places a version is written.
           HEADER_VERSION=$(sed -n 's/^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*\([0-9A-Za-z.\-]*\).*/\1/p' lettr.php | head -n1)
-          DEFINE_VERSION=$(sed -n "s/.*LETTR_VERSION'[[:space:]]*,[[:space:]]*'\([0-9A-Za-z.\-]*\)'.*/\1/p" lettr.php | head -n1)
           STABLE_TAG=$(sed -n 's/^Stable tag:[[:space:]]*\([0-9A-Za-z.\-]*\).*/\1/p' readme.txt | head -n1)
 
-          echo "Release tag:  $TAG"
+          echo "Release tag:   $TAG"
           echo "Plugin header: $HEADER_VERSION"
-          echo "LETTR_VERSION: $DEFINE_VERSION"
           echo "Stable tag:    $STABLE_TAG"
 
-          if [ "$TAG" != "$HEADER_VERSION" ] || [ "$TAG" != "$DEFINE_VERSION" ] || [ "$TAG" != "$STABLE_TAG" ]; then
+          if [ "$TAG" != "$HEADER_VERSION" ] || [ "$TAG" != "$STABLE_TAG" ]; then
             echo "::error::Release tag ($TAG) does not match all plugin version locations."
             exit 1
           fi

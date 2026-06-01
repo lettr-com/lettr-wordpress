@@ -405,6 +405,41 @@ class Lettr_Api {
 		return $this->request( 'DELETE', '/audience/segments/' . rawurlencode( $segment_id ) );
 	}
 
+	// -- Campaigns -------------------------------------------------------
+
+	/**
+	 * @param array $query page, per_page, status
+	 */
+	public function list_campaigns( array $query = array() ) {
+		return $this->request( 'GET', '/campaigns', array( 'query' => $query ) );
+	}
+
+	public function get_campaign( $campaign_id ) {
+		return $this->request( 'GET', '/campaigns/' . rawurlencode( $campaign_id ) );
+	}
+
+	/**
+	 * @param array $query event_type, email, start_date, end_date, limit, cursor
+	 */
+	public function list_campaign_events( $campaign_id, array $query = array() ) {
+		return $this->request( 'GET', '/campaigns/' . rawurlencode( $campaign_id ) . '/events', array( 'query' => $query ) );
+	}
+
+	public function send_campaign( $campaign_id ) {
+		return $this->request( 'POST', '/campaigns/' . rawurlencode( $campaign_id ) . '/send' );
+	}
+
+	/**
+	 * @param array $payload Required: scheduled_at (ISO 8601, future).
+	 */
+	public function schedule_campaign( $campaign_id, array $payload ) {
+		return $this->request( 'POST', '/campaigns/' . rawurlencode( $campaign_id ) . '/schedule', array( 'body' => $payload ) );
+	}
+
+	public function unschedule_campaign( $campaign_id ) {
+		return $this->request( 'POST', '/campaigns/' . rawurlencode( $campaign_id ) . '/unschedule' );
+	}
+
 	// -- Internal --------------------------------------------------------
 
 	/**

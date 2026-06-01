@@ -13,9 +13,10 @@
     "scripts": {
         "lint": "phpcs",
         "format": "phpcbf",
+        "test": "phpunit",
         "build": [
             "rm -rf .build lettr.zip",
-            "rsync -a --exclude='.*' --exclude='vendor' --exclude='node_modules' --exclude='composer.json' --exclude='composer.lock' --exclude='phpcs.xml.dist' --exclude='renovate.json' --exclude='lettr.zip' ./ .build/lettr/",
+            "rsync -a --exclude='.*' --exclude='vendor' --exclude='node_modules' --exclude='tests' --exclude='phpunit.xml.dist' --exclude='composer.json' --exclude='composer.lock' --exclude='phpcs.xml.dist' --exclude='renovate.json' --exclude='lettr.zip' ./ .build/lettr/",
             "( cd .build && zip -qr ../lettr.zip lettr )",
             "rm -rf .build",
             "echo Built lettr.zip"
@@ -27,7 +28,15 @@
     "require-dev": {
         "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
         "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.5",
+        "szepeviktor/phpstan-wordpress": "^2.0",
         "wp-coding-standards/wpcs": "^3.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Lettr\\Tests\\": "tests/"
+        }
     },
     "config": {
         "sort-packages": true,
