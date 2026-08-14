@@ -252,13 +252,83 @@ class Lettr_Api {
 
 	/**
 	 * @param array $payload Required: email. Optional: list_id, properties, double_opt_in.
+	 * @return array|true|WP_Error
+	 *                       On a duplicate email the API returns HTTP 409, which
+	 *                       arrives here as a WP_Error with code
+	 *                       `lettr_api_resource_already_exists` and `status` 409.
+	 *                       This is client-correctable — update the existing
+	 *                       contact, or use bulk_create_audience_contacts() with
+	 *                       `update_existing` — so it must not be retried.
+	 *                       Before this changed it escaped as HTTP 500 with the
+	 *                       misleading code `send_error`, i.e. as
+	 *                       `lettr_api_send_error`. Code branching on the old
+	 *                       code no longer matches.
 	 */
 	public function create_audience_contact( array $payload ) {
 		return $this->request( 'POST', '/audience/contacts', array( 'body' => $payload ) );
 	}
 
 	/**
-	 * @param array $payload Required: emails. Optional: list_id, properties.
+	 * Create many contacts in one request.
+	 *
+	 * The payload takes one of two shapes; exactly one of `emails` or `contacts`
+	 * is required.
+	 *
+	 * Flat — the same lists, topics and properties for everyone:
+	 *
+	 *     array(
+	 *         'emails'     => array( 'a@example.com', 'b@example.com' ),
+	 *         'list_id'    => '01h-everyone',
+	 *         'properties' => array( 'source' => 'legacy-import' ),
+	 *     )
+	 *
+	 * Per-contact — each row carries its own data, stacked on top of the
+	 * batch-wide values:
+	 *
+	 *     array(
+	 *         'contacts' => array(
+	 *             array(
+	 *                 'email'      => 'cara@example.com',
+	 *                 'properties' => array( 'plan' => 'pro' ),
+	 *                 'list_ids'   => array( '01h-vip' ),
+	 *                 'topics'     => array( array( 'id' => '01h-newsletter', 'subscription' => 'opt_in' ) ),
+	 *             ),
+	 *             array( 'email' => 'dan@example.com' ),
+	 *         ),
+	 *         'list_ids'        => array( '01h-everyone' ),
+	 *         'topics'          => array( array( 'id' => '01h-promos', 'subscription' => 'opt_out' ) ),
+	 *         'update_existing' => false,
+	 *     )
+	 *
+	 * A row-level topic `opt_out` beats a batch-level `opt_in`, which is how a
+	 * topic that auto-subscribes new contacts is suppressed for specific people
+	 * in the same request. `update_existing` (default false) controls only
+	 * whether properties are merged into contacts that already exist; existing
+	 * contacts are attached to the requested lists and topics either way.
+	 *
+	 * Limits: 1000 rows, 50 `list_ids`, 50 `topics`, property values 1000 chars.
+	 *
+	 * @param array $payload Required: emails OR contacts. Optional: list_id, list_ids, topics, properties, update_existing.
+	 * @return array|true|WP_Error
+	 *                       On success `data` carries `created`,
+	 *                       `already_existed`, `updated`, `error_count`,
+	 *                       `errors` and `contacts`.
+	 *
+	 *                       Two traps. First, the API answers 201 even when rows
+	 *                       were skipped, so a non-WP_Error return does not mean
+	 *                       every row landed — check `error_count` and read
+	 *                       `errors`, whose entries carry a zero-based `index`
+	 *                       into the submitted rows plus `email`, `error_code`
+	 *                       and `error`. Second, `already_existed` and `updated`
+	 *                       overlap by design: they answer "was it already
+	 *                       there?" and "did we change it?", so they do not sum
+	 *                       to the row count, and a contact that existed and got
+	 *                       attached to a list is counted in both.
+	 *
+	 *                       `contacts` gives `id`, `email` and `created` for
+	 *                       every contact that exists after the request, in
+	 *                       submission order — the ids come back without a
+	 *                       follow-up lookup.
 	 */
 	public function bulk_create_audience_contacts( array $payload ) {
 		return $this->request( 'POST', '/audience/contacts/bulk', array( 'body' => $payload ) );
@@ -276,6 +346,32 @@ class Lettr_Api {
 	 */
 	public function bulk_detach_audience_contacts_from_lists( array $payload ) {
 		return $this->request( 'DELETE', '/audience/contacts/lists/bulk', array( 'body' => $payload ) );
+	}
+
+	/**
+	 * Subscribe many contacts to many topics — every contact to every topic
+	 * (the cartesian product of contact_ids x topic_ids).
+	 *
+	 * @param array $payload Required: contact_ids (1-1000), topic_ids (1-50).
+	 * @return array|true|WP_Error
+	 *                       On success `data` carries `subscribed`,
+	 *                       `already_subscribed` and `total_pairs`.
+	 */
+	public function bulk_subscribe_audience_contacts_to_topics( array $payload ) {
+		return $this->request( 'POST', '/audience/contacts/topics/bulk', array( 'body' => $payload ) );
+	}
+
+	/**
+	 * Unsubscribe many contacts from many topics (the cartesian product of
+	 * contact_ids x topic_ids).
+	 *
+	 * @param array $payload Required: contact_ids (1-1000), topic_ids (1-50).
+	 * @return array|true|WP_Error
+	 *                       On success `data` carries `unsubscribed` and
+	 *                       `total_pairs`.
+	 */
+	public function bulk_unsubscribe_audience_contacts_from_topics( array $payload ) {
+		return $this->request( 'DELETE', '/audience/contacts/topics/bulk', array( 'body' => $payload ) );
 	}
 
 	public function get_audience_contact( $contact_id ) {

@@ -1,7 +1,7 @@
 === Lettr - Email API ===
 Contributors: vojtechj
 Tested up to: 7.0
-Stable tag:   1.2.0
+Stable tag:   1.3.0
 License:      GPL-2.0-or-later
 Tags:         email, smtp, transactional email, email api, lettr
 
@@ -74,6 +74,11 @@ No. Lettr uses a REST API instead of SMTP, which means there are no ports to ope
 Log in to your account at [lettr.com](https://lettr.com) and navigate to the API Keys section.
 
 == Changelog ==
+
+= 1.3.0 =
+* Add bulk topic subscription API client methods (`bulk_subscribe_audience_contacts_to_topics`, `bulk_unsubscribe_audience_contacts_from_topics`).
+* `bulk_create_audience_contacts()` now documents the per-contact `contacts` request shape, the batch-wide `list_ids` / `topics` / `update_existing` options, and the `updated` / `error_count` / `errors` / `contacts` response fields. No call signature changed — existing payloads send exactly as before.
+* **Behaviour change from the Lettr API:** creating a contact whose email already exists now returns HTTP 409, so `create_audience_contact()` fails with a `WP_Error` code of `lettr_api_resource_already_exists` (status 409). It previously returned HTTP 500, i.e. `lettr_api_send_error` (status 500). Custom code branching on the old code no longer matches, and a 409 here must not be retried.
 
 = 1.2.0 =
 * Add campaigns API client methods (list, show, events, send, schedule, unschedule).
