@@ -8,7 +8,7 @@
  * Plugin Name: Lettr - Email API
  * Description: The email API for developers. Send transactional emails at scale with reliable delivery.
  * Requires at least: 5.8
- * Version: 1.2.0
+ * Version: 1.3.0
  * Requires PHP: 7.2
  * Author: Lettr
  * Author URI: https://lettr.com
