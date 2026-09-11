@@ -247,8 +247,35 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		}
 	}
 
-	$api      = new Lettr_Api();
-	$response = $api->send_email( $body );
+	$api = new Lettr_Api();
+
+	/**
+	 * Filters the idempotency key for this send.
+	 *
+	 * Return a stable string and the send becomes safe to retry: the API
+	 * returns the original result rather than delivering a second email. This
+	 * is opt-in by design. Deriving a key automatically would have to hash the
+	 * payload, and two legitimately identical notifications - the same alert
+	 * fired twice, an hour apart - would then collapse into one silently
+	 * dropped email. Only the calling code knows whether a repeat is a retry
+	 * or a genuine second message.
+	 *
+	 * Derive the key from what the send is about, not from a timestamp or a
+	 * random value, which differ on the retry and defeat the mechanism:
+	 *
+	 *     add_filter( 'lettr_idempotency_key', function ( $key, $body, $atts ) {
+	 *         return 'order-' . $order_id . '-receipt';
+	 *     }, 10, 3 );
+	 *
+	 * Keys are kept 24 hours and scoped per team and API key.
+	 *
+	 * @param string|null $key  Idempotency key, or null to send without one.
+	 * @param array       $body The request body about to be sent.
+	 * @param array       $atts The original wp_mail() arguments.
+	 */
+	$idempotency_key = apply_filters( 'lettr_idempotency_key', null, $body, $atts );
+
+	$response = $api->send_email( $body, $idempotency_key );
 
 	if ( is_wp_error( $response ) ) {
 		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- wp_mail() core hook contract.

@@ -56,6 +56,42 @@ $result = $lettr->list_audience_contacts( array( 'per_page' => 50 ) );
 
 Every method returns the decoded JSON array on success, `true` on `204 No Content`, or a `WP_Error` on failure.
 
+### Retrying a send safely
+
+`wp_mail()` gives you no way to tell a timeout from a failure — the first attempt may well have been delivered and only the response was lost. Return a stable key from the `lettr_idempotency_key` filter and the retry replays the original result instead of sending a second email:
+
+```php
+add_filter( 'lettr_idempotency_key', function ( $key, $body, $atts ) {
+    return 'order-' . get_the_ID() . '-receipt';
+}, 10, 3 );
+```
+
+This is opt-in on purpose. Deriving a key automatically would mean hashing the payload, and two legitimately identical notifications — the same alert fired twice an hour apart — would collapse into one silently dropped email. Only your code knows whether a repeat is a retry or a genuine second message.
+
+Derive the key from what the send is *about*, not from a timestamp or `wp_generate_uuid4()` — those differ on the retry and defeat the mechanism entirely. Keys are kept 24 hours and scoped per team and API key.
+
+`Lettr_Api::send_email()` takes the key as a second argument if you are calling the client directly.
+
+### Templates, folders and purpose
+
+A template is either **transactional** (the default — receipts, password resets, alerts) or **campaign** (marketing sent to an audience list). A campaign can only send a template whose purpose is `campaign`, and **the purpose cannot be changed after creation**. Pass it when creating one:
+
+```php
+$lettr->create_template( array(
+    'name'    => 'March newsletter',
+    'html'    => $html,
+    'purpose' => 'campaign',
+) );
+```
+
+`list_folders()` lists the folders templates are filed into, with each folder's purpose and template count. It is the only source of a folder id — nothing else in the API returns one. A folder's purpose is independent of its templates': filing a template in a campaign folder does not make the template a campaign template.
+
+`list_templates()` accepts `purpose` and `folder_id` filters. A folder outside the resolved project is an error rather than an empty list, so a wrong id cannot be mistaken for an empty folder.
+
+Template responses carry `preparation_status` (`pending`, `ready`, `failed`). Imported templates render asynchronously, so a template can exist before it is sendable. After an *update* the previous render keeps serving until the new one settles — a pending template still sends, just not yet the new content.
+
+**Note:** the plugin's own admin UI does not create templates; it sends mail and checks auth. These are client methods for your own integrations.
+
 ## Documentation
 
 - [Lettr Documentation](https://docs.lettr.com)
