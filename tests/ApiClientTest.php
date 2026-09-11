@@ -60,6 +60,7 @@ final class ApiClientTest extends LettrTestCase {
 
 			// Templates.
 			'list_templates'        => array( 'list_templates', array(), 'GET', '/templates', null ),
+			'list_folders'          => array( 'list_folders', array(), 'GET', '/folders', null ),
 			'create_template'       => array( 'create_template', array( array( 'name' => 't' ) ), 'POST', '/templates', array( 'name' => 't' ) ),
 			'get_template'          => array( 'get_template', array( 'slug' ), 'GET', '/templates/slug', null ),
 			'update_template'       => array( 'update_template', array( 'slug', array( 'name' => 'x' ) ), 'PUT', '/templates/slug', array( 'name' => 'x' ) ),

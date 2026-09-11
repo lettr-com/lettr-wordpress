@@ -1,7 +1,7 @@
 === Lettr - Email API ===
 Contributors: vojtechj
 Tested up to: 7.0
-Stable tag:   1.3.0
+Stable tag:   1.4.0
 License:      GPL-2.0-or-later
 Tags:         email, smtp, transactional email, email api, lettr
 
@@ -74,6 +74,12 @@ No. Lettr uses a REST API instead of SMTP, which means there are no ports to ope
 Log in to your account at [lettr.com](https://lettr.com) and navigate to the API Keys section.
 
 == Changelog ==
+
+= 1.4.0 =
+* Add `list_folders()` — the folders templates are filed into, with each folder's purpose and template count. Nothing else in the API returns a folder id, so without it a caller either omits `folder_id` and accepts whichever folder the API picks, or hardcodes an integer read out of an app URL.
+* `create_template()` accepts `purpose` (`transactional` or `campaign`), and `list_templates()` accepts `purpose` and `folder_id` filters. A campaign can only send a template whose purpose is `campaign`, and the purpose cannot be changed after creation.
+* Add the `lettr_idempotency_key` filter. Return a stable string and a retried `wp_mail()` replays the original send instead of delivering a second email. Opt-in by design: deriving a key from the payload would silently collapse two legitimately identical notifications into one. `Lettr_Api::send_email()` also takes the key as a second argument.
+* Template responses now carry `preparation_status` (`pending`, `ready`, `failed`) — documented; no client change was needed, since responses pass through decoded.
 
 = 1.3.0 =
 * Add bulk topic subscription API client methods (`bulk_subscribe_audience_contacts_to_topics`, `bulk_unsubscribe_audience_contacts_from_topics`).

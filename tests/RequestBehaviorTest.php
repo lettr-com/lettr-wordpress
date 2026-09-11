@@ -145,6 +145,39 @@ final class RequestBehaviorTest extends LettrTestCase {
 		$this->assertSame( 'x', $query['from'] );
 	}
 
+	public function test_send_email_without_key_sends_no_idempotency_header(): void {
+		$this->client()->send_email( array( 'subject' => 'hi' ) );
+
+		$this->assertArrayNotHasKey( 'Idempotency-Key', $this->lastHeaders() );
+	}
+
+	public function test_send_email_with_key_sets_idempotency_header(): void {
+		$this->client()->send_email( array( 'subject' => 'hi' ), 'order-12345-receipt' );
+
+		$headers = $this->lastHeaders();
+		$this->assertSame( 'order-12345-receipt', $headers['Idempotency-Key'] );
+		// The key travels as a header, never as a body field.
+		$this->assertArrayNotHasKey( 'idempotency_key', $this->lastBody() );
+	}
+
+	/**
+	 * An empty string is not a key. Sending one would namespace every such send
+	 * under the same value, so the second would replay the first.
+	 */
+	public function test_send_email_ignores_an_empty_key(): void {
+		$this->client()->send_email( array( 'subject' => 'hi' ), '' );
+
+		$this->assertArrayNotHasKey( 'Idempotency-Key', $this->lastHeaders() );
+	}
+
+	public function test_extra_headers_do_not_displace_authorization(): void {
+		$this->client()->send_email( array( 'subject' => 'hi' ), 'k' );
+
+		$headers = $this->lastHeaders();
+		$this->assertSame( 'Bearer ' . self::API_KEY, $headers['Authorization'] );
+		$this->assertSame( 'application/json', $headers['Content-Type'] );
+	}
+
 	public function test_body_is_json_encoded(): void {
 		$payload = array( 'name' => 'Spring', 'nested' => array( 'a' => 1 ) );
 		$this->client()->create_template( $payload );

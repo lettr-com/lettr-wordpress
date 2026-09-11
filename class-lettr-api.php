@@ -42,8 +42,27 @@ class Lettr_Api {
 	 *                       metadata, headers, substitution_data, options,
 	 *                       attachments).
 	 */
-	public function send_email( array $payload ) {
-		return $this->request( 'POST', '/emails', array( 'body' => $payload ) );
+	/**
+	 * Send an email.
+	 *
+	 * Passing $idempotency_key makes the send safe to retry: reuse the same
+	 * value and the API returns the original result instead of delivering a
+	 * second email. The key is the caller's to choose - nothing here invents
+	 * one, because a generated key would differ on the retry and defeat the
+	 * mechanism, while hashing the payload would collapse two legitimately
+	 * identical notifications into one.
+	 *
+	 * @param array       $payload         Send body.
+	 * @param string|null $idempotency_key Opaque key, kept 24 hours by the API.
+	 */
+	public function send_email( array $payload, $idempotency_key = null ) {
+		$args = array( 'body' => $payload );
+
+		if ( is_string( $idempotency_key ) && '' !== $idempotency_key ) {
+			$args['headers'] = array( 'Idempotency-Key' => $idempotency_key );
+		}
+
+		return $this->request( 'POST', '/emails', $args );
 	}
 
 	/**
@@ -142,8 +161,24 @@ class Lettr_Api {
 	/**
 	 * @param array $query project_id, per_page, page
 	 */
+	/**
+	 * @param array $query project_id, purpose, folder_id, per_page, page
+	 */
 	public function list_templates( array $query = array() ) {
 		return $this->request( 'GET', '/templates', array( 'query' => $query ) );
+	}
+
+	/**
+	 * List the folders templates are filed into.
+	 *
+	 * The only source of a folder id: nothing else in the API returns one, so
+	 * without this a caller either omits folder_id and accepts whichever folder
+	 * the API picks, or hardcodes an integer read out of an app URL.
+	 *
+	 * @param array $query project_id, purpose, per_page, page
+	 */
+	public function list_folders( array $query = array() ) {
+		return $this->request( 'GET', '/folders', array( 'query' => $query ) );
 	}
 
 	/**
@@ -565,6 +600,10 @@ class Lettr_Api {
 			'Accept'        => 'application/json',
 			'Authorization' => 'Bearer ' . $this->api_key,
 		);
+
+		if ( ! empty( $args['headers'] ) && is_array( $args['headers'] ) ) {
+			$headers = array_merge( $headers, $args['headers'] );
+		}
 
 		$request_args = array(
 			'method'     => $method,
