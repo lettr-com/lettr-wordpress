@@ -87,18 +87,44 @@ class Lettr_Api {
 	}
 
 	/**
+	 * Schedule an email for later delivery, 5 minutes to 30 days out.
+	 *
+	 * Answers with the scheduled email. Keep its `request_id` (prefixed `sch_`):
+	 * that is what reads and cancels it. The `transmission_id` on the same
+	 * response is the sending provider's, stays null until the email actually
+	 * sends, and is the id webhook events carry.
+	 *
 	 * @param array $payload ScheduleEmailRequest — same as send_email plus required `scheduled_at` (ISO 8601).
 	 */
 	public function schedule_email( array $payload ) {
 		return $this->request( 'POST', '/emails/scheduled', array( 'body' => $payload ) );
 	}
 
-	public function get_scheduled_email( $transmission_id ) {
-		return $this->request( 'GET', '/emails/scheduled/' . rawurlencode( $transmission_id ) );
+	/**
+	 * List emails waiting to be sent.
+	 *
+	 * The only way to find a scheduled email whose `request_id` was not kept.
+	 *
+	 * @param array $query status (scheduled, sending, sent, cancelled, failed), per_page, page
+	 */
+	public function list_scheduled_emails( array $query = array() ) {
+		return $this->request( 'GET', '/emails/scheduled', array( 'query' => $query ) );
 	}
 
-	public function cancel_scheduled_email( $transmission_id ) {
-		return $this->request( 'DELETE', '/emails/scheduled/' . rawurlencode( $transmission_id ) );
+	/**
+	 * @param string $request_id The `sch_` id from schedule_email, not the provider's transmission id.
+	 */
+	public function get_scheduled_email( $request_id ) {
+		return $this->request( 'GET', '/emails/scheduled/' . rawurlencode( $request_id ) );
+	}
+
+	/**
+	 * Cancel a scheduled email, and answer with it in its cancelled state.
+	 *
+	 * @param string $request_id The `sch_` id from schedule_email, not the provider's transmission id.
+	 */
+	public function cancel_scheduled_email( $request_id ) {
+		return $this->request( 'DELETE', '/emails/scheduled/' . rawurlencode( $request_id ) );
 	}
 
 	// -- Domains ---------------------------------------------------------

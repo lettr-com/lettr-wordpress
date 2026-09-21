@@ -41,8 +41,9 @@ final class ApiClientTest extends LettrTestCase {
 			'list_email_events'     => array( 'list_email_events', array(), 'GET', '/emails/events', null ),
 			'get_email'             => array( 'get_email', array( 'req 1' ), 'GET', '/emails/req%201', null ),
 			'schedule_email'        => array( 'schedule_email', array( array( 'scheduled_at' => 't' ) ), 'POST', '/emails/scheduled', array( 'scheduled_at' => 't' ) ),
-			'get_scheduled_email'   => array( 'get_scheduled_email', array( 'tx1' ), 'GET', '/emails/scheduled/tx1', null ),
-			'cancel_scheduled'      => array( 'cancel_scheduled_email', array( 'tx1' ), 'DELETE', '/emails/scheduled/tx1', null ),
+			'list_scheduled_emails' => array( 'list_scheduled_emails', array(), 'GET', '/emails/scheduled', null ),
+			'get_scheduled_email'   => array( 'get_scheduled_email', array( 'sch_1' ), 'GET', '/emails/scheduled/sch_1', null ),
+			'cancel_scheduled'      => array( 'cancel_scheduled_email', array( 'sch_1' ), 'DELETE', '/emails/scheduled/sch_1', null ),
 
 			// Domains.
 			'list_domains'          => array( 'list_domains', array(), 'GET', '/domains', null ),
