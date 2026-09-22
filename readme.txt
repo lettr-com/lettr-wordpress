@@ -1,7 +1,7 @@
 === Lettr - Email API ===
 Contributors: vojtechj
 Tested up to: 7.0
-Stable tag:   1.4.0
+Stable tag:   1.5.0
 License:      GPL-2.0-or-later
 Tags:         email, smtp, transactional email, email api, lettr
 
@@ -74,6 +74,11 @@ No. Lettr uses a REST API instead of SMTP, which means there are no ports to ope
 Log in to your account at [lettr.com](https://lettr.com) and navigate to the API Keys section.
 
 == Changelog ==
+
+= 1.5.0 =
+* Add `list_scheduled_emails()` — the emails waiting to be sent, filterable by `status` (`scheduled`, `sending`, `sent`, `cancelled`, `failed`). This is the only way to find a scheduled email whose id was not kept.
+* `get_scheduled_email()` and `cancel_scheduled_email()` now take a `$request_id` — Lettr's own id, prefixed `sch_`. Lettr holds a scheduled email itself rather than handing it straight to the sending provider, so the provider's `transmission_id` is a *different* value: it stays null until the email actually sends, and it is the id webhook events carry. Passing it where a request id belongs is a 404. The parameter was renamed to say which one it wants; positional callers are unaffected.
+* Cancelling now answers with the cancelled email rather than an empty body, and scheduling accepts a delivery time up to 30 days out, up from 3.
 
 = 1.4.0 =
 * Add `list_folders()` — the folders templates are filed into, with each folder's purpose and template count. Nothing else in the API returns a folder id, so without it a caller either omits `folder_id` and accepts whichever folder the API picks, or hardcodes an integer read out of an app URL.
